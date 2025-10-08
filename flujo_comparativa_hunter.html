@@ -1,165 +1,325 @@
-<!-- Chosen Palette: Navy Blue-Light Blue (Primary: #1E40AF / Accent: #DBEAFE) for a distinct V2 look -->
-<!-- Application Structure Plan: The application uses a Dashboard/Vertical Timeline structure to clearly map the 6 strategic steps in the sales acceleration process, focusing on the Hunter's role as the primary qualifier and value-adder. This ensures users (like the manager) understand when and why the high-value HR Partner time is used (only after Hunter qualification). Key interactions: Collapsible sections (<details>) to hide/show complex content like emails and session guides. -->
-<!-- Visualization & Content Choices: Summary: All content is presented textually and hierarchically to convey process and roles. Goal: Organize & Inform. Viz/Presentation Method: HTML/CSS Timeline with Collapsible Details. Interaction: Click to deploy details. Justification: Best method for presenting complex, non-linear process flows and separating high-level steps from detailed execution guides (emails/guions). Library/Method: Vanilla HTML/Tailwind CSS. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback Acelerador Hunter - Comparativa</title>
+    <title>Feedback 1:1 Kudert con prospectos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4f46e5',
+                        'primary-light': '#6366f1',
+                        'secondary': '#10b981',
+                        'background': '#f9fafb',
+                        'surface': '#ffffff',
+                    }
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .timeline-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
-        .timeline-item { position: relative; padding: 1rem 0 1rem 2rem; border-left: 3px solid #1E40AF; /* Azul Oscuro para Hunter */ }
-        .timeline-item:last-child { border-left: none; padding-bottom: 0; }
-        .timeline-icon { position: absolute; left: -14px; top: 1.5rem; width: 28px; height: 28px; background-color: #1E40AF; /* Azul Oscuro */ color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; font-size: 1.2rem; }
-        .details-summary { cursor: pointer; display: block; padding: 0.5rem; border-radius: 0.5rem; transition: background-color 0.2s; font-weight: 600; }
-        details { margin-bottom: 1rem; border-radius: 0.5rem; }
-        details[open] .details-summary { background-color: #DBEAFE; color: #1E40AF; } /* Tono azul V2 claro al abrir */
-        .details-content { padding: 1rem 1.5rem; background-color: #fff; border: 1px solid #E5E7EB; border-top: none; border-radius: 0 0 0.5rem 0.5rem; }
+        .flow-card {
+            @apply bg-surface p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl border border-gray-100;
+        }
+        .flow-arrow {
+            /* Vertical arrow for mobile/desktop */
+            @apply flex justify-center py-2;
+        }
+        .arrow-icon {
+            @apply text-primary-light text-4xl font-bold;
+        }
+        /* Custom styles for the responsive flow layout */
+        .grid-flow-container {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: 1fr;
+        }
+        @media (min-width: 1024px) {
+            .grid-flow-container {
+                grid-template-columns: repeat(7, 1fr);
+                grid-template-areas:
+                    "start bdr hunter_pres hunter_decision yes hr_feedback hunter_close"
+                    ". . . hunter_decision no . ."
+                    ". . . . . standard_sale .";
+            }
+            .step-start { grid-area: start; }
+            .step-bdr { grid-area: bdr; }
+            .step-hunter-pres { grid-area: hunter_pres; }
+            .step-hunter-decision { grid-area: hunter_decision; }
+            .step-yes { grid-area: yes; }
+            .step-no { grid-area: no; }
+            .step-hr-feedback { grid-area: hr_feedback; }
+            .step-hunter-close { grid-area: hunter_close; }
+            .step-standard-sale { grid-area: standard_sale; }
+
+            .arrow-v-bdr, .arrow-v-hunter-pres, .arrow-v-yes {
+                @apply hidden; /* Hide vertical arrows on desktop */
+            }
+
+            /* Custom horizontal arrow for desktop connections */
+            .arrow-h {
+                position: absolute;
+                height: 4px;
+                background-color: #e5e7eb; /* Light gray line */
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 0;
+            }
+            .arrow-h-tip {
+                position: absolute;
+                right: 0;
+                top: 50%;
+                width: 0;
+                height: 0;
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent;
+                border-left: 10px solid #a1a1aa; /* Gray tip */
+                transform: translateY(-50%);
+            }
+        }
+        .sub-accordion-btn {
+             @apply flex justify-between items-center w-full p-3 bg-gray-50 text-gray-700 font-medium border-l-4 border-primary-light transition-all duration-200 hover:bg-gray-100 mt-2;
+        }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="bg-background min-h-screen p-4 lg:p-8 font-sans">
 
-    <header class="bg-white shadow-md py-4 mb-8">
-        <div class="timeline-container text-center">
-            <h1 class="text-3xl font-bold text-gray-900">Feedback 1:1 Kudert con prospectos</h1>
-            <p class="mt-2 text-xl font-semibold text-blue-800">Misión: Incrementar la conversión de ventas en 10% con reuniones de feedback con prospectos.</p>
-        </div>
-    </header>
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-2 text-center">Feedback 1:1 Kudert con prospectos</h1>
+        <p class="text-lg text-gray-500 mb-8 text-center">Proceso estratégico para impulsar el cierre de ventas con un regalo de alto valor.</p>
 
-    <div class="timeline-container">
-        <p class="text-lg mb-6 text-center text-gray-600">
-            **ESTRATEGIA ALTERNATIVA: MODELO HUNTER ACELERADOR.** El Hunter se convierte en el filtro, protegiendo el tiempo del experto HR Partner.
-        </p>
-
-        <!-- PASO 1 (NUEVO): SDR Agenda la Cita Inicial -->
-        <div class="timeline-item">
-            <div class="timeline-icon">1</div>
-            <details open>
-                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">1. SDR Agenda Reunión de Calificación (30 Min)</summary>
-                <div class="details-content">
-                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Detalles y Foco Estratégico</h3>
-                    <p class="mb-4">**Rol:** Prospectador (SDR). Su objetivo es puramente agendar una **primera reunión de 30 minutos** con el Hunter, sin mencionar el feedback exclusivo.</p>
-                    <ul class="list-disc list-inside space-y-1 ml-4">
-                        <li>**Acción:** Prospección y agendamiento.</li>
-                        <li>**Entregable:** Primera reunión cualificada con el Hunter.</li>
-                        <li>**Foco de la Empresa:** Más de 200 empleados (se mantiene el filtro de alta escala).</li>
-                    </ul>
-                    <p class="mt-4 p-3 bg-indigo-100 text-indigo-800 rounded-lg text-sm">
-                        **KPI Protegido:** El SDR cumple su métrica de volumen de reuniones, sin desgastar su tiempo.
-                    </p>
+        <!-- Acordeón para Misión y Documentos -->
+        <div class="mb-10 space-y-4">
+            <!-- Misión -->
+            <div x-data="{ open: false }" class="border border-primary-light rounded-xl">
+                <button @click="open = !open" class="flex justify-between items-center w-full p-4 bg-primary text-white rounded-t-xl transition-all duration-200" :class="{ 'rounded-b-xl': !open }">
+                    <span class="font-semibold text-xl">Misión del Flujo (KPI)</span>
+                    <svg class="w-6 h-6 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div x-show="open" x-collapse.duration.300ms class="p-4 bg-white rounded-b-xl text-gray-700">
+                    <p class="text-base font-medium">La misión principal de este flujo es **incrementar la conversión de ventas en 10%** utilizando las reuniones de feedback Kudert como herramienta de alto valor, asegurando que los Hunters la utilicen estratégicamente para avanzar y cerrar la negociación.</p>
                 </div>
-            </details>
+            </div>
+
+            <!-- Documentos Clave (Contiene Sub-Acordeones) -->
+            <div x-data="{ open: false }" class="border border-gray-300 rounded-xl">
+                <button @click="open = !open" class="flex justify-between items-center w-full p-4 bg-white text-gray-800 rounded-t-xl transition-all duration-200" :class="{ 'rounded-b-xl': !open }">
+                    <span class="font-semibold text-xl">Documentos Clave</span>
+                    <svg class="w-6 h-6 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div x-show="open" x-collapse.duration.300ms class="p-4 bg-white rounded-b-xl text-gray-700 space-y-3">
+
+                    <!-- Sub-Acordeón 1: Email BDR -->
+                    <div x-data="{ subOpen: false }" class="border border-gray-200 rounded-lg">
+                        <button @click="subOpen = !subOpen" class="sub-accordion-btn" :class="{ 'rounded-b-lg': !subOpen }">
+                            <span>📧 Plantilla de Email BDR (Paso 1)</span>
+                            <svg class="w-5 h-5 transform transition-transform duration-200" :class="{ 'rotate-180': subOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="subOpen" x-collapse.duration.300ms class="p-3 bg-white text-sm">
+                            <p class="mb-2"><strong class="text-primary">ASUNTO:</strong> Ideas para fortalecer a Gtes. y líderes de equipo en [Nombre de la Empresa]</p>
+                            <div class="bg-gray-50 p-3 rounded-md border border-gray-100">
+                                <p>Hola [Nombre del Prospecto],</p>
+                                <p class="my-2">En el mercado actual, la retención y el desarrollo de talento clave es un reto para empresas como la tuya, que manejan estructuras complejas y más de 200 empleados.</p>
+                                <p class="my-2">Desde Kudert, ayudamos a los líderes de RR.HH. y a los gerentes generales a tomar mejores decisiones sobre quién promover, cómo desarrollar las fortalezas del equipo y reducir la rotación no deseada.</p>
+                                <p class="my-2">¿Sería relevante para ti explorar cómo nuestra metodología puede traducirse en [Mencionar un Beneficio Específico basado en su rol: ej. *menor tiempo en la curva de aprendizaje* o *mejor alineación de equipos*] en **[Nombre de la Empresa]**?</p>
+                                <p class="my-2">Mi colega, [Nombre del Hunter] (Especialista en [Mencionar Área: ej. Optimización de Procesos HR]), tiene la experiencia de haber trabajado con más de 1000 empresas en LATAM y me pidió agendar un espacio de 20 minutos para compartir un par de ideas.</p>
+                                <p class="mt-2">¿Te vendría bien el [Día de la semana, e.g., miércoles] de esta semana a las [Hora 1] o a las [Hora 2]?</p>
+                                <p class="mt-4">Saludos,</p>
+                                <p>[Tu Nombre - BDR] | BDR | Team Kudert | [Teléfono]</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-Acordeón 2: Guion HR -->
+                    <div x-data="{ subOpen: false }" class="border border-gray-200 rounded-lg">
+                        <button @click="subOpen = !subOpen" class="sub-accordion-btn" :class="{ 'rounded-b-lg': !subOpen }">
+                            <span>👩‍💼 Guion de Sesión de Feedback HR (Paso 5a)</span>
+                            <svg class="w-5 h-5 transform transition-transform duration-200" :class="{ 'rotate-180': subOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="subOpen" x-collapse.duration.300ms class="p-3 bg-white text-sm">
+                            <h4 class="font-bold text-base mb-2">Detalles de la Sesión</h4>
+                            <ul class="list-disc list-inside space-y-1 ml-4 mb-4">
+                                <li>**Modalidad:** Online (Google Meet)</li>
+                                <li>**Duración:** 45 minutos (tiempo riguroso)</li>
+                                <li>**Enfoque:** Fortalezas laborales (CCE: Conducta, Cognición y Emoción).</li>
+                                <li>**Participante:** Prospecto (Gte. HR / Gte. Gral.).</li>
+                            </ul>
+                            <h4 class="font-bold text-base mb-2">Flujo de 45 Minutos</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white border border-gray-200">
+                                    <thead>
+                                        <tr class="bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+                                            <th class="p-2 border-b-2 border-gray-200">Paso</th>
+                                            <th class="p-2 border-b-2 border-gray-200">Duración</th>
+                                            <th class="p-2 border-b-2 border-gray-200">Foco Principal</th>
+                                            <th class="p-2 border-b-2 border-gray-200">Contenido Clave</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hover:bg-gray-50 text-gray-700">
+                                            <td class="p-2 border-b border-gray-200 font-bold">0. Preparación y Rapport</td>
+                                            <td class="p-2 border-b border-gray-200">5 Min</td>
+                                            <td class="p-2 border-b border-gray-200">Conexión y Reglas Claras.</td>
+                                            <td class="p-2 border-b border-gray-200">Rapport (2 Min): Pregunta sobre el contexto actual. Aclaración (3 Min): "La sesión dura 45 minutos y se enfoca en tus fortalezas laborales. Objetivo: que conozcas la metodología Kudert y su valor a través de tu propia experiencia."</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 text-gray-700">
+                                            <td class="p-2 border-b border-gray-200 font-bold">I. Encuadre y Fundamento CCE</td>
+                                            <td class="p-2 border-b border-gray-200">10 Min</td>
+                                            <td class="p-2 border-b border-gray-200">Autoridad y Ciencia.</td>
+                                            <td class="p-2 border-b border-gray-200">La Ciencia de Fluir y Psicología Positiva. Definir Conducta (DISC), Cognición (Habilidades Mentales) y Emoción (Inteligencia Emocional).</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 text-gray-700">
+                                            <td class="p-2 border-b border-gray-200 font-bold">II. Lectura en Profundidad</td>
+                                            <td class="p-2 border-b border-gray-200">20 Min</td>
+                                            <td class="p-2 border-b border-gray-200">Explicación Completa.</td>
+                                            <td class="p-2 border-b border-gray-200">Mostrar fortalezas CCE y explicar indicadores. Hacer preguntas que conecten el reporte con los **Pain Points** identificados por el Hunter.</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 text-gray-700">
+                                            <td class="p-2 border-b border-gray-200 font-bold">III. La Transición Comercial</td>
+                                            <td class="p-2 border-b border-gray-200">10 Min</td>
+                                            <td class="p-2 border-b border-gray-200">Mover a Inversión.</td>
+                                            <td class="p-2 border-b border-gray-200">Mencionar casos de éxito. Justificar ROI (optimiza otras inversiones y reduce rotación). Agendar el siguiente paso con el Hunter para la propuesta personalizada.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-4"><strong class="text-primary">📄 Guía de Calificación Hunter (Paso 3):</strong> Criterios para que el Hunter decida si ofrecer el regalo (Ver Guía separada para detalle BANT/MEDDIC).</p>
+                    <p><strong class="text-primary">🔗 Encuesta Pre-Feedback:</strong> Se envía ANTES de la sesión de Feedback para personalizar la intervención de HR. <a href="https://share.hsforms.com/1ryVmw3GdSW-UHa5PwNW6aA1doch" target="_blank" class="text-secondary hover:underline font-semibold">Acceder a la Encuesta aquí</a>.</p>
+
+                </div>
+            </div>
         </div>
 
-        <!-- PASO 2 (NUEVO): Hunter Califica y Acelera -->
-        <div class="timeline-item">
-            <div class="timeline-icon">2</div>
-            <details>
-                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">2. Hunter Califica la Oportunidad (30 Min) y Acelera</summary>
-                <div class="details-content">
-                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Hunter: Evaluación y Uso Estratégico del Feedback</h3>
-                    <ul class="list-disc list-inside space-y-1 ml-4">
-                        <li>**Acción:** El Hunter tiene la primera reunión. Evalúa dolor, presupuesto y autoridad.</li>
-                        <li>**Decisión Crítica:** Solo si el prospecto es **cualificado** y está **dudoso** en pasar a la propuesta de inversión, el Hunter ofrece la sesión de 45 minutos como un **regalo exclusivo para el cierre**.</li>
-                    </ul>
-                    <div class="p-3 bg-yellow-100 text-yellow-800 rounded-lg text-sm border border-gray-300 mt-4">
-                        **Guion Acelerador:** "Antes de enviar nuestra propuesta de inversión, quiero asegurarme de que mi experta [Tu Nombre] le entregue un diagnóstico... **Esto es un regalo exclusivo** para usted. Esta sesión dura 45 minutos."
+        <!-- FLUID FLOW CHART -->
+        <div class="grid-flow-container relative">
+
+            <!-- 1. Inicio/BDR -->
+            <div class="flow-card text-center bg-secondary text-white step-start">
+                <h3 class="font-bold text-xl mb-1">INICIO</h3>
+                <p class="text-sm">Pros. de +200 Empleados (Gte. HR / Gte. Gral.)</p>
+            </div>
+            <div class="flow-arrow arrow-v-bdr lg:hidden"><span class="arrow-icon">↓</span></div>
+            <div class="relative step-bdr">
+                <div class="flow-card bg-primary-light text-white h-full">
+                    <h3 class="font-bold text-xl mb-1">1. BDR Agenda Reunión</h3>
+                    <p class="text-sm">Identifica el prospecto y agenda la **Primera Reunión de Presentación** del Hunter. **KPI: Reunión Agendada.** (Ver Plantilla de Email)</p>
+                </div>
+                <!-- Desktop Arrow Connector -->
+                <div class="hidden lg:block absolute w-[100%] h-full top-0 right-[-100%]">
+                    <div class="arrow-h w-[calc(100%+0.75rem)] right-0">
+                        <div class="arrow-h-tip !border-l-primary-light"></div>
                     </div>
                 </div>
-            </details>
-        </div>
+            </div>
 
-        <!-- PASO 3 (ANTERIOR: Protocolo de Oferta, ahora Agendamiento) -->
-        <div class="timeline-item">
-            <div class="timeline-icon">3</div>
-            <details>
-                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">3. Protocolo de Oferta y Agendamiento (Hunter Transfiere)</summary>
-                <div class="details-content">
-                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Acción del Comercial: Transferencia al Experto</h3>
-                    <p class="mb-4">Llamada inmediata del Hunter para ofrecer una **sesión de feedback 1:1 y personalizada de 45 minutos** con el experto (tú).</p>
-                    <p class="p-3 bg-red-100 text-red-800 rounded-lg text-sm">
-                        **Regla de Oro:** Ser enfático en que **no se debe ofrecer a cualquier cliente**; solo a los prospectos cualificados por el Hunter.
-                    </p>
-
-                    <h4 class="font-semibold mt-4 text-gray-900">Correo para Agendar la Sesión (Post-Llamada):</h4>
-                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
-                        **ASUNTO:** 👉Exploremos tus fortalezas laborales en una sesión de 45 minutos. Gratis y personalizada.
-                        <br>... (cuerpo del correo) ...
-                        <br>
-                        👉 **Regístrate aquí y desarrolla tu prueba Kudert: [LINK DE AGENDAMIENTO REAL]**
+            <!-- 2. Hunter Presentación -->
+            <div class="flow-arrow arrow-v-hunter-pres lg:hidden"><span class="arrow-icon">↓</span></div>
+            <div class="relative step-hunter-pres">
+                <div class="flow-card bg-surface h-full">
+                    <h3 class="font-bold text-xl text-primary mb-1">2. Hunter Presentación Inicial y Calificación</h3>
+                    <p class="text-sm text-gray-700">Presenta servicios. Profundiza en dolor. Valida presupuesto/autoridad. **Hunter NO menciona el regalo AÚN.**</p>
+                </div>
+                <!-- Desktop Arrow Connector -->
+                <div class="hidden lg:block absolute w-[100%] h-full top-0 right-[-100%]">
+                    <div class="arrow-h w-[calc(100%+0.75rem)] right-0">
+                        <div class="arrow-h-tip !border-l-gray-300"></div>
                     </div>
                 </div>
-            </details>
-        </div>
+            </div>
 
-        <!-- PASO 4 (ANTERIOR: Sesión de Feedback) -->
-        <div class="timeline-item">
-            <div class="timeline-icon">4</div>
-            <details>
-                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">4. Sesión de Feedback (Entrega de Valor) - 45 Min</summary>
-                <div class="details-content">
-                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Guion del Experto (HR Partner):</h3>
-                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
-                        **El experto ejecuta el valor prometido al prospecto.**
-                        <br><br>
-                        **Paso a Paso de la Sesión (45 Min):**
-                        <ul class="list-disc list-inside space-y-1 ml-4">
-                            <li>**Rapport:** Romper el hielo, confirmar el tiempo y el objetivo.</li>
-                            <li>**Aclaración de Expectativas:** Asegurar que el prospecto entienda que es un diagnóstico.</li>
-                            <li>**Encuadre CCE:** Explicación simple de Conducta, Cognición y Emoción.</li>
-                            <li>**Lectura en Profundidad:** Diagnóstico de las fortalezas que impactan el desafío principal.</li>
-                            <li>**La Transición Comercial:** Reconocer la duda del prospecto y hacer la transición para el cierre.</li>
-                        </ul>
+            <!-- 3. Decisión (DIAMANTE) -->
+            <div class="flow-arrow arrow-v-hunter-pres lg:hidden"><span class="arrow-icon">↓</span></div>
+            <div class="flow-card text-center bg-gray-100 step-hunter-decision">
+                <h3 class="font-bold text-xl text-primary mb-1">3. Hunter Decide Regalar Feedback Kudert</h3>
+                <p class="text-sm text-gray-700">¿El prospecto cumple criterios de calificación **Y** necesita el regalo como impulso para el cierre? (Ver Guía de Calificación)</p>
+                <div class="flex justify-center mt-3">
+                    <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full border-2 border-primary text-primary">Decisión Clave</span>
+                </div>
+            </div>
+
+            <!-- Flechas de bifurcación (Solo visible en Desktop/LG) -->
+            <div class="hidden lg:block col-span-1 step-yes relative">
+                <div class="absolute w-full h-full top-[-100%] left-[-50%]">
+                    <!-- Flecha superior (SÍ) -->
+                    <div class="arrow-h w-[calc(100%+0.75rem)] bg-primary right-0">
+                        <div class="arrow-h-tip !border-l-primary"></div>
+                    </div>
+                    <p class="absolute top-[-1.5rem] right-0 text-primary font-bold">SÍ</p>
+                </div>
+            </div>
+            <div class="hidden lg:block col-span-1 step-no relative">
+                <div class="absolute w-full h-full top-[100%] left-[-50%]">
+                    <!-- Flecha inferior (NO) -->
+                    <div class="arrow-h w-[calc(100%+0.75rem)] bg-gray-500 right-0">
+                        <div class="arrow-h-tip !border-l-gray-500"></div>
+                    </div>
+                    <p class="absolute bottom-[-1.5rem] right-0 text-gray-500 font-bold">NO</p>
+                </div>
+            </div>
+
+            <!-- VÍA SÍ (Flujo superior) -->
+            <div class="flow-arrow arrow-v-yes lg:hidden"><span class="arrow-icon">↓ SÍ</span></div>
+            <div class="relative step-yes">
+                <div class="flow-card bg-primary-light text-white h-full">
+                    <h3 class="font-bold text-xl mb-1">4a. Hunter Agenda Feedback con HR</h3>
+                    <p class="text-sm">El Hunter ofrece el "regalo" y agenda la sesión de Feedback Kudert directamente contigo (HR). **Envío de Encuesta Pre-Feedback.**</p>
+                </div>
+                <!-- Desktop Arrow Connector -->
+                <div class="hidden lg:block absolute w-[100%] h-full top-0 right-[-100%]">
+                    <div class="arrow-h w-[calc(100%+0.75rem)] right-0">
+                        <div class="arrow-h-tip !border-l-primary-light"></div>
                     </div>
                 </div>
-            </details>
-        </div>
+            </div>
 
-        <!-- PASO 5 (ANTERIOR: Envío de la Encuesta) -->
-        <div class="timeline-item">
-            <div class="timeline-icon">5</div>
-            <details>
-                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">5. Envío de la Encuesta y Captura de Datos (HubSpot)</summary>
-                <div class="details-content">
-                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Acción Crítica: Encuesta de HubSpot</h3>
-                    <p class="text-sm p-3 bg-indigo-50 text-indigo-800 rounded-lg">
-                        El experto debe enviar el enlace **durante la sesión** para capturar el feedback.
-                        <br>
-                        **URL de la Encuesta:** <a href="https://share.hsforms.com/1ryVmw3GdSW-UHa5PwNW6aA1doch" target="_blank" class="text-blue-600 hover:underline">https://share.hsforms.com/1ryVmw3GdSW-UHa5PwNW6aA1doch</a>
-                    </p>
-
-                    <h4 class="font-semibold mt-4 text-gray-900">Email con resumen y recomendaciones (Post-Reunión):</h4>
-                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
-                        **(Correo de agradecimiento y transición al Hunter, tomado de Google Docs.)**
+            <div class="flow-arrow arrow-v-hunter-pres lg:hidden"><span class="arrow-icon">↓</span></div>
+            <div class="relative step-hr-feedback">
+                <div class="flow-card bg-secondary text-white h-full">
+                    <h3 class="font-bold text-xl mb-1">5a. HR Realiza Feedback</h3>
+                    <p class="text-sm">Ejecutas la sesión de 45 min. **Generas Alto Valor** y obtienes insights sobre Pain Points del prospecto. (Ver Guion Detallado)</p>
+                </div>
+                <!-- Desktop Arrow Connector -->
+                <div class="hidden lg:block absolute w-[100%] h-full top-0 right-[-100%]">
+                    <div class="arrow-h w-[calc(100%+0.75rem)] right-0">
+                        <div class="arrow-h-tip !border-l-secondary"></div>
                     </div>
                 </div>
-            </details>
-        </div>
+            </div>
 
-        <!-- PASO 6 (ANTERIOR: Cierre del Negocio) -->
-        <div class="timeline-item">
-            <div class="timeline-icon">6</div>
-            <details>
-                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">6. Notificación y Cierre del Negocio (Hunter)</summary>
-                <div class="details-content">
-                    <p class="text-base mb-4">El sistema HubSpot notifica al Hunter con los datos de la encuesta (P3: Valor, P4: Tema Relevante).</p>
-                    <h4 class="font-semibold mt-4 text-gray-900">Guion para Llamada de Cierre (Comercial):</h4>
-                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
-                        **(El guion de cierre sigue siendo el mismo: ataca el dolor identificado en la encuesta).**
-                    </div>
+            <div class="flow-arrow arrow-v-hunter-pres lg:hidden"><span class="arrow-icon">↓</span></div>
+            <div class="flow-card text-center bg-gray-900 text-white step-hunter-close">
+                <h3 class="font-bold text-xl mb-1">6a. Hunter Cierra Venta</h3>
+                <p class="text-sm">Utiliza los insights de HR para ajustar la propuesta final y asegurar el cierre. **KPI: Venta y Facturación.**</p>
+                <h3 class="mt-4 text-2xl font-extrabold text-secondary">FIN</h3>
+            </div>
+
+
+            <!-- VÍA NO (Flujo inferior - Mobile solo continua el flujo estándar) -->
+            <div class="flow-arrow arrow-v-hunter-pres lg:hidden"><span class="arrow-icon">↓ NO</span></div>
+            <div class="relative step-standard-sale col-span-3 lg:col-span-1 lg:col-start-6">
+                <div class="flow-card bg-gray-200 h-full">
+                    <h3 class="font-bold text-xl text-gray-800 mb-1">4b. Hunter Continúa Venta Estándar</h3>
+                    <p class="text-sm text-gray-600">El regalo Kudert no fue necesario. El Hunter sigue con el flujo de venta normal: Propuesta, Negociación, Cierre.</p>
                 </div>
-            </details>
+                <div class="lg:hidden flow-arrow"><span class="arrow-icon text-gray-500">↓ FIN</span></div>
+            </div>
+
+            <div class="hidden lg:block flow-card text-center bg-gray-900 text-white col-span-1 step-hunter-close">
+                <!-- Se enlaza con el 6a de arriba, no necesita más contenido aquí si 6a es el fin. -->
+            </div>
+
         </div>
 
-        <!-- Fin del Flujo -->
-        <div class="timeline-item border-l-0">
-            <div class="timeline-icon bg-gray-600" style="left: -14px;">✅</div>
-        </div>
     </div>
 </body>
 </html>
