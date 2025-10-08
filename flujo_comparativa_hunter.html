@@ -1,0 +1,165 @@
+<!-- Chosen Palette: Navy Blue-Light Blue (Primary: #1E40AF / Accent: #DBEAFE) for a distinct V2 look -->
+<!-- Application Structure Plan: The application uses a Dashboard/Vertical Timeline structure to clearly map the 6 strategic steps in the sales acceleration process, focusing on the Hunter's role as the primary qualifier and value-adder. This ensures users (like the manager) understand when and why the high-value HR Partner time is used (only after Hunter qualification). Key interactions: Collapsible sections (<details>) to hide/show complex content like emails and session guides. -->
+<!-- Visualization & Content Choices: Summary: All content is presented textually and hierarchically to convey process and roles. Goal: Organize & Inform. Viz/Presentation Method: HTML/CSS Timeline with Collapsible Details. Interaction: Click to deploy details. Justification: Best method for presenting complex, non-linear process flows and separating high-level steps from detailed execution guides (emails/guions). Library/Method: Vanilla HTML/Tailwind CSS. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Acelerador Hunter - Comparativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .timeline-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        .timeline-item { position: relative; padding: 1rem 0 1rem 2rem; border-left: 3px solid #1E40AF; /* Azul Oscuro para Hunter */ }
+        .timeline-item:last-child { border-left: none; padding-bottom: 0; }
+        .timeline-icon { position: absolute; left: -14px; top: 1.5rem; width: 28px; height: 28px; background-color: #1E40AF; /* Azul Oscuro */ color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; font-size: 1.2rem; }
+        .details-summary { cursor: pointer; display: block; padding: 0.5rem; border-radius: 0.5rem; transition: background-color 0.2s; font-weight: 600; }
+        details { margin-bottom: 1rem; border-radius: 0.5rem; }
+        details[open] .details-summary { background-color: #DBEAFE; color: #1E40AF; } /* Tono azul V2 claro al abrir */
+        .details-content { padding: 1rem 1.5rem; background-color: #fff; border: 1px solid #E5E7EB; border-top: none; border-radius: 0 0 0.5rem 0.5rem; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md py-4 mb-8">
+        <div class="timeline-container text-center">
+            <h1 class="text-3xl font-bold text-gray-900">Feedback 1:1 Kudert con prospectos</h1>
+            <p class="mt-2 text-xl font-semibold text-blue-800">Misión: Incrementar la conversión de ventas en 10% con reuniones de feedback con prospectos.</p>
+        </div>
+    </header>
+
+    <div class="timeline-container">
+        <p class="text-lg mb-6 text-center text-gray-600">
+            **ESTRATEGIA ALTERNATIVA: MODELO HUNTER ACELERADOR.** El Hunter se convierte en el filtro, protegiendo el tiempo del experto HR Partner.
+        </p>
+
+        <!-- PASO 1 (NUEVO): SDR Agenda la Cita Inicial -->
+        <div class="timeline-item">
+            <div class="timeline-icon">1</div>
+            <details open>
+                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">1. SDR Agenda Reunión de Calificación (30 Min)</summary>
+                <div class="details-content">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Detalles y Foco Estratégico</h3>
+                    <p class="mb-4">**Rol:** Prospectador (SDR). Su objetivo es puramente agendar una **primera reunión de 30 minutos** con el Hunter, sin mencionar el feedback exclusivo.</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>**Acción:** Prospección y agendamiento.</li>
+                        <li>**Entregable:** Primera reunión cualificada con el Hunter.</li>
+                        <li>**Foco de la Empresa:** Más de 200 empleados (se mantiene el filtro de alta escala).</li>
+                    </ul>
+                    <p class="mt-4 p-3 bg-indigo-100 text-indigo-800 rounded-lg text-sm">
+                        **KPI Protegido:** El SDR cumple su métrica de volumen de reuniones, sin desgastar su tiempo.
+                    </p>
+                </div>
+            </details>
+        </div>
+
+        <!-- PASO 2 (NUEVO): Hunter Califica y Acelera -->
+        <div class="timeline-item">
+            <div class="timeline-icon">2</div>
+            <details>
+                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">2. Hunter Califica la Oportunidad (30 Min) y Acelera</summary>
+                <div class="details-content">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Hunter: Evaluación y Uso Estratégico del Feedback</h3>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>**Acción:** El Hunter tiene la primera reunión. Evalúa dolor, presupuesto y autoridad.</li>
+                        <li>**Decisión Crítica:** Solo si el prospecto es **cualificado** y está **dudoso** en pasar a la propuesta de inversión, el Hunter ofrece la sesión de 45 minutos como un **regalo exclusivo para el cierre**.</li>
+                    </ul>
+                    <div class="p-3 bg-yellow-100 text-yellow-800 rounded-lg text-sm border border-gray-300 mt-4">
+                        **Guion Acelerador:** "Antes de enviar nuestra propuesta de inversión, quiero asegurarme de que mi experta [Tu Nombre] le entregue un diagnóstico... **Esto es un regalo exclusivo** para usted. Esta sesión dura 45 minutos."
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- PASO 3 (ANTERIOR: Protocolo de Oferta, ahora Agendamiento) -->
+        <div class="timeline-item">
+            <div class="timeline-icon">3</div>
+            <details>
+                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">3. Protocolo de Oferta y Agendamiento (Hunter Transfiere)</summary>
+                <div class="details-content">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Acción del Comercial: Transferencia al Experto</h3>
+                    <p class="mb-4">Llamada inmediata del Hunter para ofrecer una **sesión de feedback 1:1 y personalizada de 45 minutos** con el experto (tú).</p>
+                    <p class="p-3 bg-red-100 text-red-800 rounded-lg text-sm">
+                        **Regla de Oro:** Ser enfático en que **no se debe ofrecer a cualquier cliente**; solo a los prospectos cualificados por el Hunter.
+                    </p>
+
+                    <h4 class="font-semibold mt-4 text-gray-900">Correo para Agendar la Sesión (Post-Llamada):</h4>
+                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
+                        **ASUNTO:** 👉Exploremos tus fortalezas laborales en una sesión de 45 minutos. Gratis y personalizada.
+                        <br>... (cuerpo del correo) ...
+                        <br>
+                        👉 **Regístrate aquí y desarrolla tu prueba Kudert: [LINK DE AGENDAMIENTO REAL]**
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- PASO 4 (ANTERIOR: Sesión de Feedback) -->
+        <div class="timeline-item">
+            <div class="timeline-icon">4</div>
+            <details>
+                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">4. Sesión de Feedback (Entrega de Valor) - 45 Min</summary>
+                <div class="details-content">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Guion del Experto (HR Partner):</h3>
+                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
+                        **El experto ejecuta el valor prometido al prospecto.**
+                        <br><br>
+                        **Paso a Paso de la Sesión (45 Min):**
+                        <ul class="list-disc list-inside space-y-1 ml-4">
+                            <li>**Rapport:** Romper el hielo, confirmar el tiempo y el objetivo.</li>
+                            <li>**Aclaración de Expectativas:** Asegurar que el prospecto entienda que es un diagnóstico.</li>
+                            <li>**Encuadre CCE:** Explicación simple de Conducta, Cognición y Emoción.</li>
+                            <li>**Lectura en Profundidad:** Diagnóstico de las fortalezas que impactan el desafío principal.</li>
+                            <li>**La Transición Comercial:** Reconocer la duda del prospecto y hacer la transición para el cierre.</li>
+                        </ul>
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- PASO 5 (ANTERIOR: Envío de la Encuesta) -->
+        <div class="timeline-item">
+            <div class="timeline-icon">5</div>
+            <details>
+                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">5. Envío de la Encuesta y Captura de Datos (HubSpot)</summary>
+                <div class="details-content">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-900">Acción Crítica: Encuesta de HubSpot</h3>
+                    <p class="text-sm p-3 bg-indigo-50 text-indigo-800 rounded-lg">
+                        El experto debe enviar el enlace **durante la sesión** para capturar el feedback.
+                        <br>
+                        **URL de la Encuesta:** <a href="https://share.hsforms.com/1ryVmw3GdSW-UHa5PwNW6aA1doch" target="_blank" class="text-blue-600 hover:underline">https://share.hsforms.com/1ryVmw3GdSW-UHa5PwNW6aA1doch</a>
+                    </p>
+
+                    <h4 class="font-semibold mt-4 text-gray-900">Email con resumen y recomendaciones (Post-Reunión):</h4>
+                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
+                        **(Correo de agradecimiento y transición al Hunter, tomado de Google Docs.)**
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- PASO 6 (ANTERIOR: Cierre del Negocio) -->
+        <div class="timeline-item">
+            <div class="timeline-icon">6</div>
+            <details>
+                <summary class="details-summary text-xl text-blue-800 hover:bg-blue-50">6. Notificación y Cierre del Negocio (Hunter)</summary>
+                <div class="details-content">
+                    <p class="text-base mb-4">El sistema HubSpot notifica al Hunter con los datos de la encuesta (P3: Valor, P4: Tema Relevante).</p>
+                    <h4 class="font-semibold mt-4 text-gray-900">Guion para Llamada de Cierre (Comercial):</h4>
+                    <div class="p-3 bg-gray-100 rounded-lg text-sm border border-gray-300">
+                        **(El guion de cierre sigue siendo el mismo: ataca el dolor identificado en la encuesta).**
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- Fin del Flujo -->
+        <div class="timeline-item border-l-0">
+            <div class="timeline-icon bg-gray-600" style="left: -14px;">✅</div>
+        </div>
+    </div>
+</body>
+</html>
